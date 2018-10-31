@@ -2,7 +2,7 @@
 """
 import inchipy
 
-MOLTEXT = """
+MOL_STR = """
  OpenBabel10311810453D
 
   6  5  0  0  0  0  0  0  0  0999 V2000
@@ -22,18 +22,28 @@ M  END
 """
 
 
-def test__makeinchifrommolfiletext():
-    """ test inchipy.MakeINCHIFromMolfileText
+def test__inchi_from_mol_string():
+    """ test inchipy.inchi_from_mol_string
     """
-    options = '-SUU'
-    result = inchipy.inchi_Output()
-    ret = inchipy.MakeINCHIFromMolfileText(MOLTEXT, options, result)
-    print(ret)
-    print(result.szInChI)
-    print(result.szAuxInfo)
-    print(result.szMessage)
-    print(result.szLog)
+    inch_str, aux_str = inchipy.inchi_from_mol_string(MOL_STR)
+    assert inch_str == 'InChI=1S/C2H2F2/c3-1-2-4/h1-2H'
+    assert aux_str.startswith('AuxInfo=1/0/N:2,3,1,4')
+    inch_str, aux_str = inchipy.inchi_from_mol_string(MOL_STR,
+                                                      with_stereo=True)
+    assert inch_str == 'InChI=1/C2H2F2/c3-1-2-4/h1-2H/b2-1?'
+    assert aux_str.startswith('AuxInfo=1/0/N:2,3,1,4')
+
+
+def test__inchi_key():
+    """ test inchipy.inchi_key
+    """
+    inch_key = inchipy.inchi_key('InChI=1S/C2H2F2/c3-1-2-4/h1-2H')
+    assert inch_key == 'WFLOTYSKFUPZQB-UHFFFAOYSA-N'
+
+    inch_key = inchipy.inchi_key('InChI=1S/C2H2F2/c3-1-2-4/h1-2H/b2-1+')
+    assert inch_key == 'WFLOTYSKFUPZQB-OWOJBTEDSA-N'
 
 
 if __name__ == '__main__':
-    test__makeinchifrommolfiletext()
+    test__inchi_from_mol_string()
+    test__inchi_key()
