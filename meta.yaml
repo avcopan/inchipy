@@ -7,10 +7,11 @@ source:
 
 requirements:
     build:
-        - python
         - cmake
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+    host:
+        - python
     run:
         - python
-    test:
-        - pip:
-            - pytest
+        - pytest
